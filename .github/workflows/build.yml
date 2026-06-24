@@ -1,0 +1,48 @@
+name: Build iOS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: iOS
+        run: xcodegen generate
+
+      - name: Build IPA (no signing)
+        working-directory: iOS
+        run: |
+          xcodebuild \
+            -project NotifBridge.xcodeproj \
+            -scheme NotifBridge \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath build \
+            build
+
+      - name: Package IPA
+        run: |
+          mkdir -p output
+          cp -r iOS/build/Build/Products/Release-iphoneos/NotifBridge.app output/
+          cd output
+          mkdir Payload
+          cp -r NotifBridge.app Payload/
+          zip -r NotifBridge.ipa Payload/
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NotifBridge-iOS
+          path: output/NotifBridge.ipa

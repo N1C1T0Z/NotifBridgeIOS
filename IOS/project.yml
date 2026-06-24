@@ -1,0 +1,21 @@
+name: NotifBridge
+options:
+  bundleIdPrefix: fr.n1c1t0z
+  deploymentTarget:
+    iOS: "16.0"
+
+targets:
+  NotifBridge:
+    type: application
+    platform: iOS
+    sources:
+      - NotifBridgeApp.swift
+    info:
+      path: Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: fr.n1c1t0z.notifbridge
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_IDENTITY: ""
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGNING_ALLOWED: "NO"
